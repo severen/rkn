@@ -1,0 +1,15 @@
+# SPDX-FileCopyrightText: 2025 Severen Redwood <sev@severen.dev>
+# SPDX-License-Identifier: CC0-1.0
+
+tab_spaces = 2
+
+max_width = 80
+comment_width = 80
+wrap_comments = true
+
+# Keep expressions on one line more often.
+use_small_heuristics = "Max"
+
+match_block_trailing_comma = true
+
+group_imports = "StdExternalCrate"

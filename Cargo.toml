@@ -1,0 +1,36 @@
+# SPDX-FileCopyrightText: 2025 Severen Redwood <sev@severen.dev>
+# SPDX-License-Identifier: CC0-1.0
+
+[package]
+name = "rkn"
+version = "0.1.0"
+
+edition = "2024"
+
+[lib]
+path = "src/lib.rs"
+
+[[bin]]
+name = "rkn"
+path = "src/main.rs"
+
+[[bench]]
+name = "benchmark"
+harness = false
+
+[dependencies]
+anyhow = "1.0.97"
+ariadne = "0.5.1"
+chumsky = { version = "0.10.0", features = ["pratt"] }
+clap = { version = "4.5.35", features = [
+  "derive",
+  "unicode",
+  "wrap_help",
+  "cargo",
+] }
+mimalloc = "0.1.45"
+rustyline = "15.0.0"
+thiserror = "2.0.12"
+
+[dev-dependencies]
+criterion = { version = "0.5.1", features = ["html_reports"] }

@@ -1,0 +1,6 @@
+# SPDX-FileCopyrightText: 2025 Severen Redwood <sev@severen.dev>
+# SPDX-License-Identifier: CC0-1.0
+
+[toolchain]
+# We are on nightly so that we can use the `bigint_helper_methods` feature.
+channel = "nightly"
