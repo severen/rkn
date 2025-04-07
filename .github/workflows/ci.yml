@@ -1,0 +1,44 @@
+# SPDX-FileCopyrightText: 2025 Severen Redwood <sev@severen.dev>
+# SPDX-License-Identifier: CC0-1.0
+
+name: CI
+
+permissions:
+  contents: read
+
+on:
+  push:
+    branches: ["master"]
+  pull_request:
+    branches: ["master"]
+
+env:
+  RUST_BACKTRACE: 1
+  CARGO_TERM_COLOR: always
+
+jobs:
+  lint:
+    name: Lint and check formatting
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check formatting
+        run: cargo fmt --check
+      - name: Lint with clippy
+        run: cargo clippy
+
+  build:
+    name: Build and run tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build
+        run: cargo build
+
+      - name: Install Nextest
+        uses: taiki-e/install-action@nextest
+      - name: Run tests
+        run: cargo nextest run
