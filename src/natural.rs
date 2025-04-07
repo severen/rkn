@@ -95,7 +95,7 @@ impl AddAssign for Natural {
         let (sum, mut carry) = x[0].overflowing_add(*y);
         x[0] = sum;
 
-        for limb in &mut x[1..] {
+        for limb in x.iter_mut().skip(1) {
           if !carry {
             break;
           }
@@ -118,21 +118,21 @@ impl AddAssign for Natural {
 
         let mut carry = false;
 
-        for i in 0..y.len() {
-          let (sum, overflow) = x[i].carrying_add(y[i], carry);
-          x[i] = sum;
+        for (x_limb, y_limb) in x.iter_mut().zip(&mut *y) {
+          let (sum, overflow) = x_limb.carrying_add(*y_limb, carry);
+          *x_limb = sum;
           carry = overflow;
         }
 
         // Propagate the carry through the rest of the limbs in `x` if
         // necessary.
-        for i in y.len()..x.len() {
+        for limb in x.iter_mut().skip(y.len()) {
           if !carry {
             break;
           }
 
-          let (sum, overflow) = x[i].overflowing_add(1);
-          x[i] = sum;
+          let (sum, overflow) = limb.overflowing_add(1);
+          *limb = sum;
           carry = overflow;
         }
 
