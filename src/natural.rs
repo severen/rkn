@@ -54,7 +54,13 @@ impl Natural {
 
   #[cfg(test)]
   fn from_limbs(limbs: &[Limb]) -> Self {
-    Self(Repr::Large(limbs.to_vec()))
+    if limbs.len() == 0 {
+      Self(Repr::Small(0))
+    } else if limbs.len() == 1 {
+      Self(Repr::Small(limbs[0]))
+    } else {
+      Self(Repr::Large(limbs.to_vec()))
+    }
   }
 }
 
