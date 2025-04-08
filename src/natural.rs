@@ -5,8 +5,8 @@ use std::ops::{Add, AddAssign};
 
 /// A single digit of an arbitrary-precision integer.
 ///
-/// The specific type used should, in general, be one which fits in a single
-/// machine word on the target architecture.
+/// For efficiency reasons, this type is chosen so that each limb is a single
+/// machine word on the target architecture, which at the moment is only x86_64.
 type Limb = u64;
 
 /// An arbitrary-precision nonnegative integer.
@@ -81,8 +81,8 @@ impl Add for Natural {
 
 impl AddAssign for Natural {
   #[inline]
-  fn add_assign(&mut self, mut rhs: Natural) {
-    match (&mut self.0, &mut rhs.0) {
+  fn add_assign(&mut self, mut other: Self) {
+    match (&mut self.0, &mut other.0) {
       (Repr::Small(x), Repr::Small(y)) => {
         let (sum, overflow) = x.overflowing_add(*y);
         if overflow {
@@ -94,8 +94,8 @@ impl AddAssign for Natural {
       (Repr::Small(_), Repr::Large(_)) => {
         // We have ownership of _both_ `self` and `rhs`, so this reduces to the
         // case of adding a large natural to a small one after we swap the two.
-        std::mem::swap(self, &mut rhs);
-        *self += rhs;
+        std::mem::swap(self, &mut other);
+        *self += other;
       },
       (Repr::Large(x), Repr::Small(y)) => {
         let (sum, mut carry) = x[0].overflowing_add(*y);
