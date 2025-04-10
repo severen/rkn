@@ -6,11 +6,7 @@ name: Audit
 permissions:
   contents: read
 
-on:
-  push:
-    branches: ["master"]
-  pull_request:
-    branches: ["master"]
+on: [push, pull_request]
 
 jobs:
   check-project-licensing:

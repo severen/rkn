@@ -6,11 +6,7 @@ name: Spelling
 permissions:
   contents: read
 
-on:
-  push:
-    branches: ["master"]
-  pull_request:
-    branches: ["master"]
+on: [push, pull_request]
 
 env:
   RUST_BACKTRACE: 1
