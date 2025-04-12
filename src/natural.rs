@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2025 Severen Redwood <sev@severen.dev>
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-use std::ops::{Add, AddAssign};
+use std::ops::{Add, AddAssign, Mul, MulAssign};
 
 /// A single digit of an arbitrary-precision integer.
 ///
@@ -71,7 +71,7 @@ impl From<Limb> for Natural {
 }
 
 impl Add for Natural {
-  type Output = Natural;
+  type Output = Self;
 
   fn add(mut self, other: Self) -> Self::Output {
     self += other;
@@ -145,6 +145,43 @@ impl AddAssign for Natural {
         if carry {
           x.push(1);
         }
+      },
+    }
+  }
+}
+
+impl Mul<Natural> for Natural {
+  type Output = Self;
+
+  fn mul(mut self, other: Natural) -> Self::Output {
+    self *= other;
+    self
+  }
+}
+
+impl MulAssign<Natural> for Natural {
+  fn mul_assign(&mut self, mut other: Natural) {
+    match (&mut self.0, &mut other.0) {
+      (Repr::Small(x), Repr::Small(y)) => {
+        let (product, overflow) = x.widening_mul(*y);
+        if overflow != 0 {
+          *self = Natural(Repr::Large(vec![product, overflow]));
+        } else {
+          *x = product;
+        }
+      },
+      (Repr::Small(_), Repr::Large(_)) => {
+        // We have ownership of _both_ `self` and `rhs`, so this reduces to the
+        // case of multiplying a large natural by a small one after we swap the
+        // two.
+        std::mem::swap(self, &mut other);
+        *self *= other;
+      },
+      (Repr::Large(_), Repr::Small(_)) => {
+        todo!("Implement multiplication of large natural by small natural")
+      },
+      (Repr::Large(_), Repr::Large(_)) => {
+        todo!("Implement multiplication of large natural by large natural")
       },
     }
   }
@@ -253,5 +290,37 @@ mod tests {
     let a = Natural::from_limbs(&[Limb::MAX, Limb::MAX, Limb::MAX]);
     let b = Natural::from_limbs(&[1, 0, 0]);
     assert_eq!(a + b, Natural::from_limbs(&[0, 0, 0, 1]));
+  }
+
+  #[test]
+  fn test_mul_small_small() {
+    assert_exprs! {
+      0 * 0 = 0,
+      1 * 0 = 0,
+      0 * 1 = 0,
+      1 * 1 = 1,
+      2 * 3 = 6,
+      10 * 20 = 200,
+      123 * 456 = 56088
+    };
+  }
+
+  #[test]
+  fn test_mul_small_small_overflow() {
+    assert_eq!(
+      SMALL_MAX * Natural::from(2),
+      Natural::from_limbs(&[0xFFFF_FFFF_FFFF_FFFE, 1])
+    );
+
+    let half_max = Natural::from(Limb::MAX / 2 + 1);
+    assert_eq!(
+      half_max.clone() * half_max,
+      Natural::from_limbs(&[0, 0x4000_0000_0000_0000])
+    );
+
+    assert_eq!(
+      SMALL_MAX * SMALL_MAX,
+      Natural::from_limbs(&[0x1, 0xfffffffffffffffe])
+    );
   }
 }
