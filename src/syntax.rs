@@ -34,7 +34,7 @@ fn parser<'src>() -> impl Parser<'src, &'src str, Expr> {
       infix(left(1), op('+'), |a, _, b, _| Add(Box::new(a), Box::new(b))),
       infix(left(1), op('-'), |a, _, b, _| Sub(Box::new(a), Box::new(b))),
       infix(left(2), op('*'), |a, _, b, _| Mul(Box::new(a), Box::new(b))),
-      infix(left(3), op('^'), |a, _, b, _| Pow(Box::new(a), Box::new(b))),
+      infix(right(3), op('^'), |a, _, b, _| Pow(Box::new(a), Box::new(b))),
       prefix(2, op('-'), |_, x, _| Neg(Box::new(x))),
     ))
   })
