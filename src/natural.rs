@@ -283,16 +283,36 @@ mod tests {
 
   #[test]
   fn test_add_large_large_overflow() {
+    // Add two addends of the same length such that carrying is required but
+    // does not require resizing.
     let a = Natural::from_limbs(&[Limb::MAX, 10]);
     let b = Natural::from_limbs(&[1, 5]);
     assert_eq!(a + b, Natural::from_limbs(&[0, 16]));
 
+    // Add two addends of the same length such that carrying is required and
+    // causes a resize.
     let a = Natural::from_limbs(&[Limb::MAX, Limb::MAX]);
     let b = Natural::from_limbs(&[1, 0]);
     assert_eq!(a + b, Natural::from_limbs(&[0, 0, 1]));
 
+    // Different length operands - first longer than second
+    let a = Natural::from_limbs(&[Limb::MAX, Limb::MAX, 5]);
+    let b = Natural::from_limbs(&[1, 0]);
+    assert_eq!(a + b, Natural::from_limbs(&[0, 0, 6]));
+
+    // Different length operands - second longer than first
+    let a = Natural::from_limbs(&[Limb::MAX, 3]);
+    let b = Natural::from_limbs(&[1, 0, 7]);
+    assert_eq!(a + b, Natural::from_limbs(&[0, 4, 7]));
+
+    // Carry that propagates through multiple limbs
     let a = Natural::from_limbs(&[Limb::MAX, Limb::MAX, Limb::MAX]);
     let b = Natural::from_limbs(&[1, 0, 0]);
+    assert_eq!(a + b, Natural::from_limbs(&[0, 0, 0, 1]));
+
+    // Different lengths with multi-limb carry propagation
+    let a = Natural::from_limbs(&[Limb::MAX, Limb::MAX, Limb::MAX, 0]);
+    let b = Natural::from_limbs(&[1, 0]);
     assert_eq!(a + b, Natural::from_limbs(&[0, 0, 0, 1]));
   }
 
