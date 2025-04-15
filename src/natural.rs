@@ -162,6 +162,10 @@ impl Mul<Natural> for Natural {
 impl MulAssign<Natural> for Natural {
   fn mul_assign(&mut self, mut other: Natural) {
     match (&mut self.0, &mut other.0) {
+      (Repr::Small(0), _) => {},
+      (_, Repr::Small(0)) => *self = Natural::ZERO,
+      (Repr::Small(1), _) => *self = other,
+      (_, Repr::Small(1)) => {},
       (Repr::Small(x), Repr::Small(y)) => {
         let (product, overflow) = x.widening_mul(*y);
         if overflow != 0 {
@@ -299,6 +303,10 @@ mod tests {
       1 * 0 = 0,
       0 * 1 = 0,
       1 * 1 = 1,
+      0 * 5 = 0,
+      5 * 0 = 0,
+      1 * 5 = 5,
+      5 * 1 = 5,
       2 * 3 = 6,
       10 * 20 = 200,
       123 * 456 = 56088
