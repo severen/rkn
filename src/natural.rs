@@ -54,7 +54,7 @@ impl Natural {
 
   #[cfg(test)]
   fn from_limbs(limbs: &[Limb]) -> Self {
-    if limbs.len() == 0 {
+    if limbs.is_empty() {
       Self(Repr::Small(0))
     } else if limbs.len() == 1 {
       Self(Repr::Small(limbs[0]))

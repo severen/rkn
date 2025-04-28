@@ -33,11 +33,11 @@ fn main() -> Result<()> {
 fn run(expr: &str) -> Result<()> {
   let (output, errs) = parse(expr).into_output_errors();
   if !errs.is_empty() {
-    println!("{:?}", errs);
+    println!("{errs:?}");
   }
 
   if let Some(expr) = output {
-    println!("Parse tree: {:?}", expr);
+    println!("Parse tree: {expr:?}");
     println!("Result: {}", eval(expr));
   }
 
@@ -85,7 +85,7 @@ fn repl() -> Result<()> {
       Ok(line) => run(&line)?,
       Err(ReadlineError::Eof | ReadlineError::Interrupted) => break,
       Err(err) => {
-        eprintln!("REPL Error: {:?}", err);
+        eprintln!("REPL Error: {err:?}");
         break;
       },
     }
@@ -102,7 +102,7 @@ fn repl() -> Result<()> {
         })
       })
   {
-    eprintln!("Warning: {:#}", err);
+    eprintln!("Warning: {err:#}");
   }
 
   Ok(())
