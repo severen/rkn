@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2025 Severen Redwood <sev@severen.dev>
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#![feature(bigint_helper_methods)]
+#![feature(widening_mul)]
 
 use crate::syntax::Expr;
 

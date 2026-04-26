@@ -2,5 +2,5 @@
 # SPDX-License-Identifier: CC0-1.0
 
 [toolchain]
-# We are on nightly so that we can use the `bigint_helper_methods` feature.
+# We are on nightly so that we can use the `widening_mul` feature.
 channel = "nightly"
