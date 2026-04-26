@@ -4,3 +4,4 @@
 [toolchain]
 # We are on nightly so that we can use the `widening_mul` feature.
 channel = "nightly"
+components = ["rustfmt", "clippy"]
